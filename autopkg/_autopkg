@@ -1,25 +1,45 @@
 #compdef autopkg
 #autoload
 
+_autopkg_installed_recipes() {
+  recipes=(${(f)"$(_call_program recipes autopkg list-recipes 2>/dev/null)"})
+}
+
+_autopkg_installed_install_recipes(){
+  recipes=(${(f)"$(_call_program recipes autopkg list-recipes\|grep .install$ 2>/dev/null)"})
+}
+
 __info() {
   _arguments \
     '(-h,--help)'{-h,--help}'[show help on info command and exit]' \
-    '(-d,--search-dir=)'{-d,--search-dir=}'[Directory to search for recipes. Can be specified multiple times]:directory:_files -/' \
-    '--override-dir=[Directory to search for recipe overrides. Can be specified multiple times]:directory:_files -/'
+    '(-d,--search-dir=)'{-d,--search-dir=}'[Directory to search for recipes.]:directory:_files -/' \
+    '--override-dir=[Directory to search for recipe overrides.]:directory:_files -/' \
+    '1: :->forms' && return 0
+
+    if [[ "$state" == forms ]]; then
+      _autopkg_installed_recipes
+      _wanted recipes expl 'recipes' compadd -a recipes
+    fi
 }
 
 __install() {
   _arguments \
     '(-h,--help)'{-h,--help}'[show help on install command and exit]' \
-    '(--post=,--postprocessor=)'{--post=,--postprocessor=}'[Name of a processor to run after each recipe. Can be repeated to run multiple postprocessors.]:file:_files' \
+    '(--post=,--postprocessor=)'{--post=,--postprocessor=}'[Name of a processor to run after each recipe.]:file:_files' \
     '(-c,--check)'{-c,--check}'[Only check for new/changed downloads.]' \
-    '(-k,--key=)'{-k,--key=}'[ Provide key/value pairs for recipe input. Caution: values specified here will be applied to all recipes.]' \
+    '(-k,--key=)'{-k,--key=}'[ Provide key/value pairs for recipe input.]' \
     '(-l,--recipe-list=)'{-l,--recipe-list=}'[Path to a text file with a list of recipes to run.]:file:_files' \
     '(-p,--pkg=)'{-p,--pkg=}'[Path to a pkg or dmg to provide to a recipe. Downloading will be skipped.]:file:_files' \
     '--report-plist=[File path to save run report plist.]:directory:_files' \
     '(-v,--verbose)'{-v,--verbose}'[Verbose output.]' \
-    '(-d,--search-dir=)'{-d,--search-dir=}'[Directory to search for recipes. Can be specified multiple times.]:directory:_files -/' \
-    '--override-dir=[Directory to search for recipe overrides. Can be specified multiple times.]:directory:_files -/'
+    '(-d,--search-dir=)'{-d,--search-dir=}'[Directory to search for recipes.]:directory:_files -/' \
+    '--override-dir=[Directory to search for recipe overrides.]:directory:_files -/' \
+    '1: :->forms' && return 0
+
+    if [[ "$state" == forms ]]; then
+      _autopkg_installed_install_recipes
+      _wanted recipes expl 'install recipes' compadd -a recipes
+    fi
 }
 
 __list-recipes() {
@@ -28,66 +48,95 @@ __list-recipes() {
     '(-i,--with-identifiers)'{-i,--with-identifiers}'[Include recipe'\''s identifier in the list.]' \
     '(-p,--with-paths)'{-p,--with-paths}'[Include recipe'\''s path in the list.]' \
     '--plist[Print recipe list in plist format. This provides all available key/value pairs of recipes.]' \
-    '(-a,--show-all)'{-a,--show-all}'[Include recipes with duplicate shortnames, including overrides. Use in conjunction with '\''--with-identifiers'\'', '\''--with-paths'\'', or '\''--plist'\''.]' \
-    '(-d,--search-dir=)'{-d,--search-dir=}'[Directory to search for recipes. Can be specified multiple times.]:directory:_files -/' \
-    '--override-dir=[Directory to search for recipe overrides. Can be specified multiple times.]:directory:_files -/'
+    '(-a,--show-all)'{-a,--show-all}'[Include recipes with duplicate shortnames, including overrides.]' \
+    '(-d,--search-dir=)'{-d,--search-dir=}'[Directory to search for recipes.]:directory:_files -/' \
+    '--override-dir=[Directory to search for recipe overrides.]:directory:_files -/'
 }
 
 __make-override() {
   _arguments \
     '(-h,--help)'{-h,--help}'[show help on make-override command and exit]' \
-    '(-d,--search-dir=)'{-d,--search-dir=}'[Directory to search for recipes. Can be specified multiple times.]:directory:_files -/' \
-    '--override-dir=[Directory to search for recipe overrides. Can be specified multiple times.]:directory:_files -/' \
-    '(-n,--name=)'{-n,--name}'[Name for override file.]'
+    '(-d,--search-dir=)'{-d,--search-dir=}'[Directory to search for recipes.]:directory:_files -/' \
+    '--override-dir=[Directory to search for recipe overrides.]:directory:_files -/' \
+    '(-n,--name=)'{-n,--name}'[Name for override file.]' \
+    '1: :->forms' && return 0
+
+    if [[ "$state" == forms ]]; then
+      _autopkg_installed_recipes
+      _wanted recipes expl 'recipes' compadd -a recipes
+    fi
 }
 
 __processor-info() {
-  _arguments \
+ _arguments \
     '(-h,--help)'{-h,--help}'[show help on processor-info command and exit]' \
     '(-r,--recipe=)'{-r,--recipe=}'[Name of recipe using the processor.]' \
-    '(-d,--search-dir=)'{-d,--search-dir=}'[Directory to search for recipes. Can be specified multiple times.]:directory:_files -/' \
-    '--override-dir=[Directory to search for recipe overrides. Can be specified multiple times.]:directory:_files -/' 
+    '(-d,--search-dir=)'{-d,--search-dir=}'[Directory to search for recipes.]:directory:_files -/' \
+    '--override-dir=[Directory to search for recipe overrides.]:directory:_files -/'
 }
 
 __repo-add() {
   _arguments \
-    '(-h,--help)'{-h,--help}'[show help on repo-add command and exit]' 
+    '(-h,--help)'{-h,--help}'[show help on repo-add command and exit]'
 }
 
 __repo-delete() {
   _arguments \
-    '(-h,--help)'{-h,--help}'[show help on repo-delete command and exit]' 
+    '(-h,--help)'{-h,--help}'[show help on repo-delete command and exit]'
 }
 
 __repo-update() {
   _arguments \
-    '(-h,--help)'{-h,--help}'[show help on repo-update command and exit]' 
+    '(-h,--help)'{-h,--help}'[show help on repo-update command and exit]'
 }
+
+__run() {
+  _arguments \
+    '(-h,--help)'{-h,--help}'[show help on install command and exit]' \
+    '(--post=,--postprocessor=)'{--post=,--postprocessor=}'[Name of a processor to run after each recipe.]:file:_files' \
+    '(-c,--check)'{-c,--check}'[Only check for new/changed downloads.]' \
+    '(-k,--key=)'{-k,--key=}'[ Provide key/value pairs for recipe input.]' \
+    '(-l,--recipe-list=)'{-l,--recipe-list=}'[Path to a text file with a list of recipes to run.]:file:_files' \
+    '(-p,--pkg=)'{-p,--pkg=}'[Path to a pkg or dmg to provide to a recipe. Downloading will be skipped.]:file:_files' \
+    '--report-plist=[File path to save run report plist.]:directory:_files' \
+    '(-v,--verbose)'{-v,--verbose}'[Verbose output.]' \
+    '(-d,--search-dir=)'{-d,--search-dir=}'[Directory to search for recipes.]:directory:_files -/' \
+    '--override-dir=[Directory to search for recipe overrides.]:directory:_files -/' \
+    '1: :->forms' && return 0
+
+    if [[ "$state" == forms ]]; then
+      _autopkg_installed_recipes
+      _wanted recipes expl 'recipes' compadd -a recipes
+    fi
+} 
 
 __search() {
   _arguments \
     '(-h,--help)'{-h,--help}'[show help on search command and exit]' \
     '(-u,--user=)'{-u,--user}'[Alternate GitHub user whose repos to search. Defaults to '\''autopkg'\''.]' \
-    '(-p,--path-only)'{-p,--path-only}'[Restrict search results to the recipe'\''s path only.  Note that the search API currently does not support fuzzy matches, so only exact directory or filenames (minus the extensions) will be returned.]' \
-    '(-t,--use-token)'{-t,--use-token}'[Use a public-scope GitHub token for a higher rate limit. If a token doesn'\''t exist, you'\''ll be prompted for your account credentials to create one.]'
+    '(-p,--path-only)'{-p,--path-only}'[Restrict search results to the recipe'\''s path only.]' \
+    '(-t,--use-token)'{-t,--use-token}'[Use a public-scope GitHub token for a higher rate limit.]'
 }
 
+local expl
+local -a recipes installed_recipes
 
 local -a _1st_arguments
 _1st_arguments=(
-  'help:display help'
-  'info:get info about configuration or a recipe'
-  'install:run one or more install recipes'
-  'list-processors:list available core processors'
-  'list-recipes:list recipes available locally'
-  'make-override:make a recipe override'
-  'processor-info:get information about a specific processor'
-  'repo-add:add one or more recipe repo from a URL'
-  'repo-delete:delete a recipe repo'
-  'repo-list:list installed recipe repos'
-  'repo-update:update one or more recipe repos'
-  'search:search for recipes on github'
-  'version:print the current version of autopkg'
+  'help:Display help'
+  'info:Get info about configuration or a recipe'
+  'install:Run one or more install recipes'
+  'list-processors:List available core processors'
+  'list-recipes:List recipes available locally'
+  'make-override:Make a recipe override'
+  'processor-info:Get information about a specific processor'
+  'repo-add:Add one or more recipe repo from a URL'
+  'repo-delete:Delete a recipe repo'
+  'repo-list:List installed recipe repos'
+  'repo-update:Update one or more recipe repos'
+  'run:Run one or more recipes'
+  'search:Search for recipes on github'
+  'version:Print the current version of autopkg'
 )
 
 _arguments '*:: :->command'
@@ -115,6 +164,8 @@ case "$words[1]" in
     __repo-delete ;;
   repo-update)
     __repo-update ;;
+  run)
+    __run ;;
   search)
     __search ;;
 esac
