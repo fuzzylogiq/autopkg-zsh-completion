@@ -7,3 +7,7 @@ Add this any way you know how, for oh-my-zsh clone it into your custom/plugins d
 And then add autopkg to your plugins in .zshrc
 
     plugins=(autopkg ...)
+
+Then you'll probably want to reload your shell:
+
+    exec $SHELL -l
