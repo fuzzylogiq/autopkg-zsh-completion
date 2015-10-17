@@ -1,3 +1,7 @@
+# (c) Ben Goodstein 2015
+#
+# autopkg completion script for zsh
+
 #compdef autopkg
 #autoload
 
@@ -9,6 +13,18 @@ _autopkg_installed_install_recipes(){
   recipes=(${(f)"$(_call_program recipes autopkg list-recipes\|grep .install$ 2>/dev/null)"})
 }
 
+_autopkg_installed_or_file() {
+  local expl ret=1
+  _tags recipe_files recipes
+  _autopkg_installed_recipes
+  while _tags; do
+    _requested recipe_files expl '.recipe files' _files -g '*.recipe' && ret=0
+    _requested recipes expl 'recipes' compadd -a recipes && ret=0
+    ((ret)) || break
+  done
+  return ret
+}
+
 __info() {
   _arguments \
     '(-h,--help)'{-h,--help}'[show help on info command and exit]' \
@@ -17,8 +33,7 @@ __info() {
     '1: :->forms' && return 0
 
     if [[ "$state" == forms ]]; then
-      _autopkg_installed_recipes
-      _wanted recipes expl 'recipes' compadd -a recipes
+      _autopkg_installed_or_file
     fi
 }
 
@@ -105,8 +120,7 @@ __run() {
     '1: :->forms' && return 0
 
     if [[ "$state" == forms ]]; then
-      _autopkg_installed_recipes
-      _wanted recipes expl 'recipes' compadd -a recipes
+      _autopkg_installed_or_file
     fi
 } 
 
