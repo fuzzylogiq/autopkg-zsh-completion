@@ -1,9 +1,9 @@
-# (c) Ben Goodstein 2015
-#
-# autopkg completion script for zsh
-
 #compdef autopkg
 #autoload
+
+#(c) Ben Goodstein 2015
+#
+# autopkg completion script for zsh
 
 _autopkg_installed_recipes() {
   recipes=(${(f)"$(_call_program recipes autopkg list-recipes 2>/dev/null)"})
