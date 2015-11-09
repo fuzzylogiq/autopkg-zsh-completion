@@ -1,6 +1,9 @@
 # autopkg-zsh-completion
 
-Add this any way you know how, for oh-my-zsh clone it into your custom/plugins dir like so:
+## Installation
+
+### oh-my-zsh
+For oh-my-zsh, clone it into your `custom/plugins` directory like so:
 
     git clone https://github.com/fuzzylogiq/autopkg-zsh-completion $ZSH_CUSTOM/plugins/autopkg
 
@@ -12,6 +15,15 @@ And then add autopkg to your plugins in .zshrc
 
     plugins=(autopkg ...)
 
-Then you'll probably want to reload your shell:
+### zgen
+
+If you use [zgen](https://github.com/tarjoilija/zgen), add the following line in your `.zshrc` with your other zgen load commands.
+
+    zgen load unixorn/autoupdate-zgen
+
+## Post-install
+
+You'll probably want to reload your shell:
 
     exec $SHELL -l
+
